@@ -45,3 +45,4 @@ step_order int NOT NULL,
 PRIMARY KEY(step_id),
 FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
 );
+use projects;

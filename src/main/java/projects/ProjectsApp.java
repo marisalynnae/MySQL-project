@@ -10,14 +10,22 @@ import projects.exception.DbException;
 import projects.service.ProjectService;
 
 public class ProjectsApp {
+	private Scanner scanner = new Scanner(System.in);
+	
+	private Project curProject;
+	
 	private ProjectService projectService = new ProjectService();
+	
+	
 	// @formatter:off
 	private List<String> operations = List.of(
-					"1) Add a project"
+					"1) Add a project",
+					"2) List projects",
+					"3) Select a project"
 					);
 	// @formatter:on
 			
-	private Scanner scanner = new Scanner(System.in);
+	
 
 	public static void main(String[] args) {
 		new ProjectsApp().processUserSelections();
@@ -35,14 +43,42 @@ public class ProjectsApp {
 				case 1:
 					createProject();
 					break;
+				case 2:
+					listProjects();
+					break;
+				case 3:
+					selectProject();
+					break;
 				default: 
 					System.out.println("\n" + selection + " is not a valid selection. Try again.");
+					break;
 				}
 			}
 			catch(Exception e) {
 				System.out.println("\nError: " + e + " Try again.");
 			}
 		}
+	}
+
+	private void selectProject() {
+		listProjects();
+		Integer projectId = getIntInput("Enter a project ID to select a project");
+		curProject = null;
+		curProject = projectService.fetchProjectById(projectId);
+		if(Objects.isNull(curProject)) {
+			System.out.println("Invalid project ID selected.");
+		}
+		
+	}
+
+	private void listProjects() {
+		List<Project> projects = projectService.fetchAllProjects();
+		System.out.println("\nProjects: ");
+//		for(Project project: projects) {
+//			System.out.print("   " + project.getProjectId() + ": " + project.getProjectName());
+//		}
+		projects.forEach(project -> 
+		System.out.println("   " + project.getProjectId() + ": " + project.getProjectName()));
 	}
 
 	private void createProject() {
@@ -120,8 +156,17 @@ public class ProjectsApp {
 	private void printOperations() {
 		System.out.println("\nThese are the available selections. Press the Enter key to quit:");
 		operations.forEach(line -> System.out.println("  " + line));
-		// for(String i : operations) {
-		// System.out.println(i); }
+// 		for(String i : operations) {
+// 		System.out.println(i); }
+//		System.out.println(Objects.isNull(curProject) ? 
+//				"\nYou are not working with a projct" : 
+//					"\nYou are working with project: " + curProject);
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou are not working with a project.");
+		}
+		else { 
+			System.out.println("\nYou are working with project: " + curProject);
+		}
 	}
 }
 
